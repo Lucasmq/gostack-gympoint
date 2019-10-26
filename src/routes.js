@@ -15,9 +15,10 @@ routes.post('/session', SessionController.store);
 // Não permite o cadastro/atualização sem estar autenticado
 routes.use(authMiddleware);
 
-routes.put('/update', UserController.update);
+routes.put('/users/update', UserController.update);
 
 // Cadastro de alunos
 routes.post('/students', StudentController.store);
+routes.put('/student/update', StudentController.update);
 
 export default routes;
