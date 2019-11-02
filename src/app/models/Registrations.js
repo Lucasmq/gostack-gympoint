@@ -7,6 +7,7 @@ class Registration extends Model {
         price: Sequelize.FLOAT,
         start_date: Sequelize.DATE,
         end_date: Sequelize.DATE,
+        canceledAt: Sequelize.DATE,
       },
       {
         sequelize,

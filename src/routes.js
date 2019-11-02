@@ -24,8 +24,14 @@ routes.put('/student/update', StudentController.update);
 
 // Planos
 routes.post('/plans', PlanController.store);
+routes.get('/plans', PlanController.index);
+routes.put('/plans/:id', PlanController.update);
+routes.delete('/plans/:id', PlanController.delete);
 
 // Cadastro de alunos nos planos
-routes.post('/registration', RegistrationController.store);
+routes.post('/registrations', RegistrationController.store);
+routes.get('/registrations', RegistrationController.index);
+routes.put('/registrations/update', RegistrationController.update);
+routes.delete('/registrations/:id', RegistrationController.delete);
 
 export default routes;
