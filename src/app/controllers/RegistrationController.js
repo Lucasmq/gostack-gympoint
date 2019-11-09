@@ -4,6 +4,10 @@ import Sequelize from 'sequelize';
 import Registration from '../models/Registrations';
 import Plan from '../models/Plans';
 
+import RegistrationMail from '../jobs/RegistrationMail';
+import Queue from '../../lib/Queue';
+import Student from '../models/Student';
+
 class RegistratioController {
   async store(req, res) {
     const schema = Yup.object().shape({
@@ -18,7 +22,10 @@ class RegistratioController {
     }
 
     const plan = await Plan.findOne({
-      where: { id: req.body.plan_id },
+      where: {
+        id: req.body.plan_id,
+        canceled_at: null,
+      },
     });
 
     if (!plan) {
@@ -39,6 +46,14 @@ class RegistratioController {
     );
     const { id, price } = await Registration.create(req.body);
 
+    const student = await Student.findByPk(req.body.student_id);
+
+    await Queue.add(RegistrationMail.key, {
+      student,
+      plan,
+      price,
+    });
+
     return res.json({
       id,
       price,
@@ -48,7 +63,7 @@ class RegistratioController {
 
   async index(req, res) {
     const { Op } = Sequelize;
-
+    const { page = 1 } = req.query.page > 0 ? req.query : 1;
     /*
      * Lista as matriculas ainda vingentes pela data de termino
      */
@@ -58,6 +73,9 @@ class RegistratioController {
           [Op.gte]: new Date(),
         },
       },
+      order: ['start_date'],
+      limit: 20,
+      offset: (page - 1) * 20,
       attributes: [
         'id',
         'price',
